@@ -8,7 +8,7 @@ var _ = require ("lodash");
 var policy = require ("../../policy");
 
 // index
-var index = __dirname + "/../..";
+var index = __dirname + "/../../index.js";
 // related options for api
 var options = {
   root : index + "/endpoints", // the app index
