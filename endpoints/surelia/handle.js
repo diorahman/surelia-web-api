@@ -19,20 +19,21 @@ Surelia.prototype.listMailboxes = function * (){
   yield handle.get (this, "listMailboxes", {});
 }
 
-Surelia.prototype.ListEmails = function * (){
+Surelia.prototype.listEmails = function * (){
   yield handle.get (this, "listEmails", {});
+}
+
+
+Surelia.prototype.uploadEmail = function * (){
+  yield handle.put (this, "uploadEmail", {});
 }
 
 Surelia.prototype.readEmail = function * (){
   yield handle.get (this, "readEmail", {});
 }
 
-Surelia.prototype.markRead = function * (){
-  yield handle.put (this, "markRead", {});
-}
-
-Surelia.prototype.markUnread = function * (){
-  yield handle.del (this, "markUnread", {});
+Surelia.prototype.manageFlag = function * (){
+  yield handle.put (this, "manageFlag", {});
 }
 
 Surelia.prototype.deleteEmail = function * (){

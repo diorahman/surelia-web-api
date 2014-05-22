@@ -15,7 +15,10 @@ module.exports = function(options){
 
   var app = koa();
   var manager = new ImapManager({});
-  app.manager = manager;
+  app.use(function *(next) {
+    this.imapManager = manager;
+    yield next;
+  })
   app.use (mount);
   return app;
 }

@@ -1,4 +1,5 @@
 var helper = require ("panas").helper;
+var boom = helper.error;
 var thunkified = helper.thunkified;
 var _ = require ("lodash");
 var boom = helper.error;
@@ -12,43 +13,169 @@ function Surelia (options) {
 }
 
 Surelia.prototype.authenticate = function (ctx, options, cb) {
+  var self = this;
   console.log("Connecting to IMAP");
-  ctx.manager.get({
+  var user = options.body.user;
+  var pass = options.body.pass;
+  ctx.imapManager.get({
     server: "imap.gmail.com",
     auth: {
-      user: ctx.body.username,
-      pass: ctx.body.password
+      user: user,
+      pass: pass
     },
-    user: ctx.body.username 
+    user: user 
   },function(err, client) {
+    if (err) {
+      return cb(err);
+    }
+    var p = function * (next) {
+      this["imapUser"] = user;
+      yield next;
+    }
+    ctx.app.middleware.unshift(p);
     console.log("Connected");
-    cb(null);
+    cb(null, {});
   });
 }
 
+Surelia.prototype.getClient = function (ctx, options, cb) {
+  var client = ctx.imapManager.connections[ctx.imapUser];
+  if (!client) {
+    throw (boom.forbidden("Login required"));
+  }
+  return client;
+}
+
 Surelia.prototype.listMailboxes = function (ctx, options, cb) {
-  console.log(ctx.manager);
-  cb (null, {});
+  var client = this.getClient(ctx, options, cb);
+  client.listMailboxes(function(err, mboxes) {
+    cb (null, {
+      type: "list",
+       data: mboxes,
+       count: mboxes.length
+    });
+  });
 }
 
 Surelia.prototype.listEmails = function (ctx, options, cb) {
-  cb (null, {});
+  var client = this.getClient(ctx, options, cb);
+  client.openMailbox(ctx.params.id, function(err, mboxInfo) {
+    if (err) {
+      return cb(err);
+    }
+    var from = ctx.query.from || 0;
+    var limit = ctx.query.limit || 20;
+    client.listMessages(from, limit, function(err, mbox) {
+      if (err) {
+        return cb(err);
+      }
+      cb (null, {
+        type: "list",
+         data: mbox,
+         count: mbox.length,
+         total: mboxInfo.count
+      });
+    });
+  });
+}
+
+Surelia.prototype.uploadEmail = function (ctx, options, cb) {
+  var client = this.getClient(ctx, options, cb);
+  client.openMailbox(ctx.params.id, function(err, mboxInfo) {
+    if (err) {
+      return cb(err);
+    }
+    client.storeMessage(options.body.message, function(err, result) {
+      if (err) {
+        return cb(err);
+      }
+      cb (null, {
+        type: "email",
+          data: {
+            mailbox: ctx.params.id,
+            uid: result.UID,
+            uidValidity: result.UIDValidity,
+          }
+      });
+    });
+  });
+
+
+
 }
 
 Surelia.prototype.readEmail = function (ctx, options, cb) {
-  cb (null, {});
+  var client = this.getClient(ctx, options, cb);
+  client.openMailbox(ctx.params.id, function(err, mboxInfo) {
+    if (err) {
+      return cb(err);
+    }
+    var from = ctx.query.from || 0;
+    var limit = ctx.query.limit || 20;
+    client.fetchData(ctx.params.emailId, function(err, message) {
+      if (err) {
+        return cb(err);
+      }
+      cb (null, {
+        type: "email",
+         data: message
+      });
+    });
+  });
 }
 
-Surelia.prototype.markRead = function (ctx, options, cb) {
-  cb (null, {});
-}
+Surelia.prototype.manageFlag = function (ctx, options, cb) {
+  var client = this.getClient(ctx, options, cb);
+  client.openMailbox(ctx.params.id, function(err, mboxInfo) {
+    if (err) {
+      return cb(err);
+    }
 
-Surelia.prototype.markUnread = function (ctx, options, cb) {
-  cb (null, {});
+    var result = function(err, message) {
+      if (err) {
+        return cb(err);
+      }
+      var returnValue = {
+        type: "email",
+        data: {
+          mailbox: ctx.params.id,
+          uid: ctx.params.emailId
+        }
+      };
+      if (options.body.unflag) {
+        returnValue.data.unflag = options.body.unflag; 
+      } else {
+        returnValue.data.flag = options.body.flag; 
+      }
+      cb (null, returnValue);
+    }
+
+    if (options.body.unflag) {
+      client.removeFlags(ctx.params.emailId, options.body.flag, result);
+    } else {
+      client.addFlags(ctx.params.emailId, options.body.flag, result);
+    }
+
+  });
 }
 
 Surelia.prototype.deleteEmail = function (ctx, options, cb) {
-  cb (null, {});
+  var client = this.getClient(ctx, options, cb);
+  client.openMailbox(ctx.params.id, function(err, mboxInfo) {
+    if (err) {
+      return cb(err);
+    }
+
+    client.deleteMessage(ctx.params.emailId, function(err) {
+      if (err) {
+        return cb(err);
+      }
+
+      return cb(null, {});
+    });
+
+  });
+
 }
 
 Surelia.prototype.readEmailRaw = function (ctx, options, cb) {

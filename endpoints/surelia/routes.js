@@ -15,16 +15,16 @@ function Routes (name, mid, handle) {
   router.GET ("/surelia/boxes", handle.listMailboxes);
 
   // List emails inside mentioned box
-  router.GET ("/surelia/boxes/:id", handle.ListEmails);
+  router.GET ("/surelia/boxes/:id", handle.listEmails);
+
+  // Upload a new email to a mailbox
+  router.PUT ("/surelia/boxes/:id", handle.uploadEmail);
 
   // Read an email with mentioned id in the box
   router.GET ("/surelia/boxes/:id/:emailId", handle.readEmail);
 
-  // Mark an email with mentioned id in the box as read
-  router.PUT ("/surelia/boxes/:id/:emailId/read", handle.markRead);
-
-  // Mark an email with mentioned id in the box as unread
-  router.DEL ("/surelia/boxes/:id/:emailId/read", handle.markUnread);
+  // Mark/unmark an email with mentioned id in the box with a flag 
+  router.PUT ("/surelia/boxes/:id/:emailId", handle.manageFlag);
 
   // Move an email with mentioned id in the box to trash
   // If the box is the trash box, then delete the email permanently
