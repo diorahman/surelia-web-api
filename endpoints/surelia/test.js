@@ -1,5 +1,4 @@
 var request = require ("supertest").agent;
-var resources = "../../resources";
 var async = require ("async");
 var qsify = require ("koa-qs");
 
@@ -23,6 +22,24 @@ var toServer = function (){ return app.listen()}
 
 describe ("Surelia", function (){
 
+  it ("Authenticate", function (done){
+
+    // GET
+    var uri = "/api/1/surelia/authenticate";
+
+    var data = {
+      user: "mdamt",
+     pass: "mdamtok"
+    };
+    request (toServer())
+    .post (uri)
+    .send (data)
+    .expect (200)
+    .end(function (err, res){
+      done(err);
+    });
+  });
+
   it ("Get boxes", function (done){
 
     // GET
@@ -36,5 +53,4 @@ describe ("Surelia", function (){
     });
 
   });
-
 });

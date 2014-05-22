@@ -8,6 +8,9 @@ function Routes (name, mid, handle) {
   // Create a router object with namespace `name` and middleware `mid`
   var router = new Router(name, mid);
   
+  // Authenticate
+  router.POST ("/surelia/authenticate", handle.authenticate);
+
   // List boxes
   router.GET ("/surelia/boxes", handle.listMailboxes);
 

@@ -11,7 +11,23 @@ function Surelia (options) {
   this.name = "surelia";
 }
 
+Surelia.prototype.authenticate = function (ctx, options, cb) {
+  console.log("Connecting to IMAP");
+  ctx.manager.get({
+    server: "imap.gmail.com",
+    auth: {
+      user: ctx.body.username,
+      pass: ctx.body.password
+    },
+    user: ctx.body.username 
+  },function(err, client) {
+    console.log("Connected");
+    cb(null);
+  });
+}
+
 Surelia.prototype.listMailboxes = function (ctx, options, cb) {
+  console.log(ctx.manager);
   cb (null, {});
 }
 

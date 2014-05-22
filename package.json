@@ -24,6 +24,9 @@
     "request": "~2.36.0",
     "debug": "~0.8.1",
     "lodash": "~2.4.1"
+    "koa": "~0.6.0",
+    "mongoose": "~3.8.8",
+    "inbox": "~1.1.54"
   },
   "devDependencies": {
     "should": "~3.3.0",

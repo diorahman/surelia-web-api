@@ -11,6 +11,10 @@ function Surelia (options) {
   if (!(this instanceof Surelia)) return new Surelia (options);
 }
 
+Surelia.prototype.authenticate = function * (){
+  yield handle.post (this, "authenticate", {});
+}
+
 Surelia.prototype.listMailboxes = function * (){
   yield handle.get (this, "listMailboxes", {});
 }
@@ -46,3 +50,5 @@ Surelia.prototype.readHeaders = function * (){
 Surelia.prototype.sendEmail = function * (){
   yield handle.post (this, "sendEmail", {});
 }
+
+
