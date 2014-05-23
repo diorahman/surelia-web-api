@@ -48,8 +48,14 @@ Surelia.prototype.readHeaders = function * (){
   yield handle.get (this, "readHeaders", {});
 }
 
-Surelia.prototype.sendEmail = function * (){
-  yield handle.post (this, "sendEmail", {});
+Surelia.prototype.composeEmail = function * (){
+  yield handle.put (this, "composeEmail", {});
 }
 
+Surelia.prototype.updateDraftEmail = function * (){
+  yield handle.put (this, "updateDraftEmail", {});
+}
 
+Surelia.prototype.sendDraftEmail = function * (){
+  yield handle.post (this, "sendDraftEmail", {});
+}

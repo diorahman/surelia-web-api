@@ -58,7 +58,6 @@ Surelia.prototype.listMailboxes = function (ctx, options, cb) {
     }
 
     var getChildren = function(index, cb) {
-      console.log(index);
       if (index < 0) return cb();
 
       var mbox = mboxes[index]; 
@@ -89,6 +88,13 @@ Surelia.prototype.listMailboxes = function (ctx, options, cb) {
     }
 
     getChildren(total - 1, function() {
+      // Expose special boxes
+      var p = function * (next) {
+        this["imapSpecialBoxes"] = specials;
+        yield next;
+      }
+      ctx.app.middleware.unshift(p);
+
       cb (null, {
         type: "object",
          all: mboxes,
@@ -121,8 +127,9 @@ Surelia.prototype.listEmails = function (ctx, options, cb) {
 }
 
 Surelia.prototype.uploadEmail = function (ctx, options, cb) {
+  var mailbox = options.mailbox || ctx.params.id;
   var client = this.getClient(ctx, options, cb);
-  client.openMailbox(ctx.params.id, function(err, mboxInfo) {
+  client.openMailbox(mailbox, function(err, mboxInfo) {
     if (err) {
       return cb(err);
     }
@@ -133,7 +140,7 @@ Surelia.prototype.uploadEmail = function (ctx, options, cb) {
       cb (null, {
         type: "email",
           data: {
-            mailbox: ctx.params.id,
+            mailbox: mailbox,
             uid: result.UID,
             uidValidity: result.UIDValidity,
           }
@@ -249,9 +256,30 @@ Surelia.prototype.readHeaders = function (ctx, options, cb) {
       });
     });
   });
-
 }
 
+
+Surelia.prototype.checkSpecialBoxes = function (ctx, options, cb) {
+  var self = this;
+  if (!ctx.imapSpecialBoxes) {
+    self.listMailboxes(ctx, options, cb);
+  } else {
+    cb(null);
+  }
+}
+
+Surelia.prototype.composeEmail = function (ctx, options, cb) {
+  var self = this;
+  self.checkSpecialBoxes(ctx, options, function() {
+    var draft = ctx.imapSpecialBoxes["Drafts"];
+    if (!draft) {
+      throw (boom.internalServerError("Drafts folder is unavailable"));
+    }
+
+    options.mailbox = draft;
+    self.uploadEmail(ctx, options, cb);
+  });
+}
 Surelia.prototype.sendEmail = function (ctx, options, cb) {
   cb (null, {});
 }

@@ -36,8 +36,14 @@ function Routes (name, mid, handle) {
   // Read the email headers with mentioned id in the box 
   router.GET ("/surelia/boxes/:id/:emailId/headers", handle.readHeaders);
 
-  // Send a new email
-  router.POST ("/surelia/", handle.sendEmail);
+  // Compose a new draft email
+  router.PUT ("/surelia", handle.composeEmail);
+
+  // Update a new draft email
+  router.PUT ("/surelia/:id", handle.updateDraftEmail);
+
+  // Send a draft email
+  router.POST ("/surelia/:id", handle.sendDraftEmail);
 
   // return the router;
   return router;

@@ -200,6 +200,27 @@ describe ("Surelia", function (){
 
   });
 
+  it ("Compose a new email", function (done){
+
+    var uri = "/api/1/surelia";
+    var data = {
+      message: "From: test@test.com\nTo: test2@test2.com\nSubject: Test\n\nDraft Message"
+    };
+
+    request (toServer())
+    .put(uri)
+    .send(data)
+    .expect (200)
+    .end(function (err, res){
+     
+      console.log(res.body);
+      
+      done(err);
+    });
+
+  });
+
+
 
 
 
