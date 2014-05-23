@@ -131,10 +131,9 @@ describe ("Surelia", function (){
     .expect (200)
     .expect ("Content-Type", /text\/plain/)
     .end(function (err, res){
-      console.log(res.body);
+      console.log(res.text);
       done(err);
     });
-
   });
 
 
