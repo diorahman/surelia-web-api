@@ -61,7 +61,7 @@ describe ("Surelia", function (){
     .get (uri)
     .expect (200)
     .end(function (err, res){
-      console.log(res.body);
+      console.log(JSON.stringify(res.body));
       done(err);
     });
 

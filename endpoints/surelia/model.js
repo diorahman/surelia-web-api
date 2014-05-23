@@ -48,11 +48,52 @@ Surelia.prototype.getClient = function (ctx, options, cb) {
 
 Surelia.prototype.listMailboxes = function (ctx, options, cb) {
   var client = this.getClient(ctx, options, cb);
+  var specials = {};
+  var specialBoxes = ["Drafts", "Sent", "Spam", "INBOX", "Trash"];
+
   client.listMailboxes(function(err, mboxes) {
-    cb (null, {
-      type: "list",
-       data: mboxes,
-       count: mboxes.length
+    var total = mboxes.length;
+    if (total == 0) {
+      return cb(null, { type: "list", data: [], count: 0});
+    }
+
+    var getChildren = function(index, cb) {
+      console.log(index);
+      if (index < 0) return cb();
+
+      var mbox = mboxes[index]; 
+      if (mbox.hasChildren) {
+        mbox.listChildren(function(err, children) {
+          mbox.children = children;
+          _.each(children, function(child) {
+            _.each(specialBoxes, function(specialBox, index) {
+              if (child.type && child.type == specialBox) {
+                specials[specialBox] = child.path;
+                specialBoxes.splice(index, 1);
+              }
+            });
+          });
+
+          getChildren(index - 1, cb);
+        });
+      } else {
+        getChildren(index - 1, cb);
+      }
+
+      _.each(specialBoxes, function(specialBox, index) {
+        if (mbox.type && mbox.type == specialBox) {
+          specials[specialBox] = mbox.path;
+          specialBoxes.splice(index, 1);
+        }
+      });
+    }
+
+    getChildren(total - 1, function() {
+      cb (null, {
+        type: "object",
+         all: mboxes,
+        specials : specials 
+      });
     });
   });
 }
