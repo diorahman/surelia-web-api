@@ -179,7 +179,16 @@ Surelia.prototype.deleteEmail = function (ctx, options, cb) {
 }
 
 Surelia.prototype.readEmailRaw = function (ctx, options, cb) {
-  cb (null, {});
+  var client = this.getClient(ctx, options, cb);
+  client.openMailbox(ctx.params.id, function(err, mboxInfo) {
+    if (err) {
+      return cb(err);
+    }
+
+    var stream = client.createMessageStream(ctx.params.emailId);
+    ctx.type = "text/plain";
+    stream.pipe(ctx.res);
+  });
 }
 
 Surelia.prototype.readHeaders = function (ctx, options, cb) {

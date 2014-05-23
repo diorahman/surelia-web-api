@@ -111,6 +111,23 @@ describe ("Surelia", function (){
 
   });
 
+  it ("Read a raw email in a box", function (done){
+
+    // GET
+    var uri = "/api/1/surelia/boxes/INBOX/" + uploadedEmail + "/raw";
+
+    request (toServer())
+    .get (uri)
+    .expect (200)
+    .expect ("Content-Type", /text\/plain/)
+    .end(function (err, res){
+      console.log(res);
+      done(err);
+    });
+
+  });
+
+
   it ("Flag an email in a box with read flag", function (done){
 
     // GET
