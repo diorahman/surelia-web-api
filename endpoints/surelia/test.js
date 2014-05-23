@@ -47,6 +47,7 @@ describe ("Surelia", function (){
     .send (data)
     .expect (200)
     .end(function (err, res){
+      console.log(res.body);
       done(err);
     });
   });
@@ -60,7 +61,7 @@ describe ("Surelia", function (){
     .get (uri)
     .expect (200)
     .end(function (err, res){
-      console.log(res);
+      console.log(res.body);
       done(err);
     });
 
@@ -80,7 +81,7 @@ describe ("Surelia", function (){
     .expect (200)
     .end(function (err, res){
      
-      console.log(res);
+      console.log(res.body);
       uploadedEmail = res.body.data.uid;
       
       done(err);
@@ -99,7 +100,7 @@ describe ("Surelia", function (){
     .get (uri)
     .expect (200)
     .end(function (err, res){
-      console.log(res);
+      console.log(res.body);
       done(err);
     });
 
@@ -114,7 +115,7 @@ describe ("Surelia", function (){
     .get (uri)
     .expect (200)
     .end(function (err, res){
-      console.log(res);
+      console.log(res.body);
       done(err);
     });
 
@@ -130,7 +131,7 @@ describe ("Surelia", function (){
     .expect (200)
     .expect ("Content-Type", /text\/plain/)
     .end(function (err, res){
-      console.log(res);
+      console.log(res.body);
       done(err);
     });
 
@@ -147,7 +148,7 @@ describe ("Surelia", function (){
     .send({flag: "\Seen"})
     .expect (200)
     .end(function (err, res){
-      console.log(res);
+      console.log(res.body);
       done(err);
     });
 
@@ -163,7 +164,7 @@ describe ("Surelia", function (){
     .send({unflag: "\Seen"})
     .expect (200)
     .end(function (err, res){
-      console.log(res);
+      console.log(res.body);
       done(err);
     });
 
@@ -178,7 +179,7 @@ describe ("Surelia", function (){
     .del (uri)
     .expect (200)
     .end(function (err, res){
-      console.log(res);
+      console.log(res.body);
       done(err);
     });
 
