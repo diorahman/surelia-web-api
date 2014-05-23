@@ -136,6 +136,22 @@ describe ("Surelia", function (){
     });
   });
 
+  it ("Read an email's headers in a box", function (done){
+
+    // GET
+    var uri = "/api/1/surelia/boxes/INBOX/" + uploadedEmail + "/headers";
+
+    request (toServer())
+    .get (uri)
+    .expect (200)
+    .end(function (err, res){
+      console.log(res.body);
+      done(err);
+    });
+  });
+
+
+
 
   it ("Flag an email in a box with read flag", function (done){
 

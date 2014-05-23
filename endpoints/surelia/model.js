@@ -193,7 +193,22 @@ Surelia.prototype.readEmailRaw = function (ctx, options, cb) {
 }
 
 Surelia.prototype.readHeaders = function (ctx, options, cb) {
-  cb (null, {});
+  var client = this.getClient(ctx, options, cb);
+  client.openMailbox(ctx.params.id, function(err, mboxInfo) {
+    if (err) {
+      return cb(err);
+    }
+    client.listMessagesByUID(ctx.params.emailId, ctx.params.emailId, function(err, mbox) {
+      if (err) {
+        return cb(err);
+      }
+      cb (null, {
+        type: "email-header",
+         data: mbox[0]
+      });
+    });
+  });
+
 }
 
 Surelia.prototype.sendEmail = function (ctx, options, cb) {
