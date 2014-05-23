@@ -20,6 +20,9 @@ function Routes (name, mid, handle) {
   // Upload a new email to a mailbox
   router.PUT ("/surelia/boxes/:id", handle.uploadEmail);
 
+  // Read a raw email with mentioned id in the box 
+  router.GET ("/surelia/boxes/:id/:emailId/raw", handle.readEmailRaw);
+
   // Read an email with mentioned id in the box
   router.GET ("/surelia/boxes/:id/:emailId", handle.readEmail);
 
@@ -29,9 +32,6 @@ function Routes (name, mid, handle) {
   // Move an email with mentioned id in the box to trash
   // If the box is the trash box, then delete the email permanently
   router.DEL ("/surelia/boxes/:id/:emailId", handle.deleteEmail);
-
-  // Read a raw email with mentioned id in the box 
-  router.GET ("/surelia/boxes/:id/:emailId/raw", handle.readEmailRaw);
 
   // Read the email headers with mentioned id in the box 
   router.GET ("/surelia/boxes/:id/:emailId/headers", handle.readHeaders);

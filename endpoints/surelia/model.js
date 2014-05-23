@@ -186,8 +186,10 @@ Surelia.prototype.readEmailRaw = function (ctx, options, cb) {
     }
 
     var stream = client.createMessageStream(ctx.params.emailId);
+    console.log(stream);
+    ctx.body = stream;
     ctx.type = "text/plain";
-    stream.pipe(ctx.res);
+    ctx.status = 200;
   });
 }
 
