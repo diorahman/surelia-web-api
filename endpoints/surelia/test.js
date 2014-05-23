@@ -22,6 +22,15 @@ app.on("error", function(err){console.log(err.stack)})
 
 var toServer = function (){ return app.listen()}
 
+try {
+var userData = require("./user-test.json");
+} catch(e) {
+  console.log("\n\nPrepare a file called user-test.json containing your imap credentials before starting test");
+  console.log("{ \"user\": \"\", \"pass\": \"\"}\n\n");
+  process.exit(-1);
+}
+
+
 describe ("Surelia", function (){
 
   it ("Authenticate", function (done){
@@ -30,8 +39,8 @@ describe ("Surelia", function (){
     var uri = "/api/1/surelia/authenticate";
 
     var data = {
-      user: "",
-     pass: ""
+      user: userData.user,
+     pass: userData.pass
     };
     request (toServer())
     .post (uri)
