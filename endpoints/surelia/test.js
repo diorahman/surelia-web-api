@@ -7,28 +7,46 @@ var qsify = require ("koa-qs");
 var _ = require ("lodash");
 var policy = require ("../../policy");
 
+try {
+var userData = require("./user-test.json");
+} catch(e) {
+  console.log("\n\nPrepare a file called user-test.json containing your imap credentials before starting test");
+  console.log("{{ \"imap\":");
+  console.log("  { \"user\": \"\", \"pass\": \"\"}");
+  console.log("},");
+  console.log("{ \"smtp\":");
+  console.log("  { \"user\": \"\", \"pass\": \"\"}");
+  console.log("}}");
+  process.exit(-1);
+}
+
+
 // index
 var index = __dirname + "/../../index.js";
 // related options for api
 var options = {
   root : index + "/endpoints", // the app index
   db : "mongodb://localhost/test", // the db uri
-  driver : require ("mongoose") // the driver
+  driver : require ("mongoose"), // the driver
+  imapConfig : userData.imap,
+  smtpConfig : {
+    host: userData.smtp.host,
+    options: {
+      secureConnection: true,
+      auth: {
+        user: userData.smtp.user,
+        pass: userData.smtp.pass,
+      }
+    }
+  }
 }
+
 options =_.merge(policy, options);
 
 var app = qsify(require(index)(options));
 app.on("error", function(err){console.log(err.stack)})
 
 var toServer = function (){ return app.listen()}
-
-try {
-var userData = require("./user-test.json");
-} catch(e) {
-  console.log("\n\nPrepare a file called user-test.json containing your imap credentials before starting test");
-  console.log("{ \"user\": \"\", \"pass\": \"\"}\n\n");
-  process.exit(-1);
-}
 
 
 describe ("Surelia", function (){
@@ -39,8 +57,8 @@ describe ("Surelia", function (){
     var uri = "/api/1/surelia/authenticate";
 
     var data = {
-      user: userData.user,
-     pass: userData.pass
+      user: userData.imap.user,
+     pass: userData.imap.pass
     };
     request (toServer())
     .post (uri)

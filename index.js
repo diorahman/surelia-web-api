@@ -10,6 +10,7 @@ module.exports = function(options){
   options = options || {};
   options.root = __dirname + "/endpoints";
   options.driver = require ("mongoose");
+  options.omama="omam"
 
   var mount = panas.api(options).burn();
 

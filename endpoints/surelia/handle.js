@@ -1,6 +1,5 @@
 var helper = require ("panas").helper;
-var model = require ("./model");
-var handle = helper.Handle (model);
+var handle;
 
 module.exports = Surelia;
 
@@ -8,6 +7,9 @@ module.exports = Surelia;
  * The Surelia handlers
  */
 function Surelia (options) {
+  var model = require ("./model")(options);
+  handle = helper.Handle (model);
+
   if (!(this instanceof Surelia)) return new Surelia (options);
 }
 

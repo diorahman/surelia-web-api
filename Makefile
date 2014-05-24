@@ -3,7 +3,7 @@ test:
 		--require should \
 		--reporter spec \
 		--harmony \
-		--timeout 10000 \
+		--timeout 50000 \
 		endpoints/surelia/test.js
 
 .PHONY: test

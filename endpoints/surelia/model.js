@@ -5,22 +5,11 @@ var _ = require ("lodash");
 var boom = helper.error;
 var mailer = require("simplesmtp");
 
-var smtpConfig = {
-  port: 465,
-  host: "smtp.gmail.com",
-  options : {
-    secureConnection: true,
-    auth: {
-      user: "",
-      pass: ""
-    }
-  }
-};
-
 /**
  * Surelia class
  */
 function Surelia (options) {
+  this.options = options;
   if (!(this instanceof Surelia)) return new Surelia(options);
   this.name = "surelia";
 }
@@ -31,7 +20,7 @@ Surelia.prototype.authenticate = function (ctx, options, cb) {
   var user = options.body.user;
   var pass = options.body.pass;
   ctx.imapManager.get({
-    server: "imap.gmail.com",
+    server: self.options.imapConfig.host,
     auth: {
       user: user,
       pass: pass
@@ -372,7 +361,7 @@ Surelia.prototype.sendDraftEmail = function (ctx, options, cb) {
       }
 
       options.directReturn = true;
-      var smtp = mailer.connect(smtpConfig.port, smtpConfig.host, smtpConfig.options);
+      var smtp = mailer.connect(self.options.smtpConfig.port, self.options.smtpConfig.host, self.options.smtpConfig.options);
         console.log("Start sending");
       smtp.once("idle", function() {
         smtp.useEnvelope({
@@ -397,4 +386,6 @@ Surelia.prototype.sendDraftEmail = function (ctx, options, cb) {
   });
 }
 
-module.exports = thunkified (Surelia());
+module.exports = function(options) {
+  return thunkified (Surelia(options));
+}
