@@ -25,7 +25,8 @@
     "debug": "~0.8.1",
     "lodash": "~2.4.1",
     "inbox": "~1.1.54",
-    "simplesmtp": "~0.3.31"
+    "simplesmtp": "~0.3.31",
+    "mailparser": "~0.4.3"
   },
   "devDependencies": {
     "should": "~3.3.0",

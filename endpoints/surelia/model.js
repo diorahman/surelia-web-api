@@ -4,6 +4,7 @@ var thunkified = helper.thunkified;
 var _ = require ("lodash");
 var boom = helper.error;
 var mailer = require("simplesmtp");
+var MailParser = require("mailparser").MailParser;
 
 /**
  * Surelia class
@@ -150,9 +151,6 @@ Surelia.prototype.uploadEmail = function (ctx, options, cb) {
       });
     });
   });
-
-
-
 }
 
 Surelia.prototype.readEmail = function (ctx, options, cb) {
@@ -161,17 +159,16 @@ Surelia.prototype.readEmail = function (ctx, options, cb) {
     if (err) {
       return cb(err);
     }
-    var from = ctx.query.from || 0;
-    var limit = ctx.query.limit || 20;
-    client.fetchData(ctx.params.emailId, function(err, message) {
-      if (err) {
-        return cb(err);
-      }
+    var parser = new MailParser();
+    parser.on("end", function(message) {
       cb (null, {
         type: "email",
          data: message
       });
     });
+
+    var stream = client.createMessageStream(ctx.params.emailId);
+    stream.pipe(parser);
   });
 }
 
