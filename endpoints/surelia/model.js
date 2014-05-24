@@ -41,7 +41,8 @@ Surelia.prototype.authenticate = function (ctx, options, cb) {
 }
 
 Surelia.prototype.getClient = function (ctx, options, cb) {
-  var client = ctx.imapManager.connections[ctx.imapUser];
+  var user = ctx.imapUser || ctx.session.user._id;
+  var client = ctx.imapManager.connections[user];
   if (!client) {
     throw (boom.forbidden("Login required"));
   }
