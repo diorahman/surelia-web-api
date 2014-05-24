@@ -52,7 +52,7 @@ Surelia.prototype.getClient = function (ctx, options, cb) {
 Surelia.prototype.listMailboxes = function (ctx, options, cb) {
   var client = this.getClient(ctx, options, cb);
   var specials = {};
-  var specialBoxes = ["Drafts", "Sent", "Spam", "INBOX", "Trash"];
+  var specialBoxes = ["Drafts", "Sent", "Spam", "Inbox", "Trash"];
 
   client.listMailboxes(function(err, mboxes) {
     var total = mboxes.length;
