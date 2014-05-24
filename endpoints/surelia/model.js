@@ -108,9 +108,17 @@ Surelia.prototype.listMailboxes = function (ctx, options, cb) {
   });
 }
 
+Surelia.prototype.getMailboxName = function(name) {
+  if (name) {
+    return name.replace(/\|/, "/");
+  }
+}
+
 Surelia.prototype.listEmails = function (ctx, options, cb) {
   var client = this.getClient(ctx, options, cb);
-  client.openMailbox(ctx.params.id, function(err, mboxInfo) {
+  var mailbox = this.getMailboxName(ctx.params.id);
+  mailbox = this.getMailboxName(mailbox);
+  client.openMailbox(mailbox, function(err, mboxInfo) {
     if (err) {
       return cb(err);
     }
@@ -132,6 +140,7 @@ Surelia.prototype.listEmails = function (ctx, options, cb) {
 
 Surelia.prototype.uploadEmail = function (ctx, options, cb) {
   var mailbox = options.mailbox || ctx.params.id;
+  mailbox = this.getMailboxName(mailbox);
   var client = this.getClient(ctx, options, cb);
   client.openMailbox(mailbox, function(err, mboxInfo) {
     if (err) {
@@ -155,7 +164,8 @@ Surelia.prototype.uploadEmail = function (ctx, options, cb) {
 
 Surelia.prototype.readEmail = function (ctx, options, cb) {
   var client = this.getClient(ctx, options, cb);
-  client.openMailbox(ctx.params.id, function(err, mboxInfo) {
+  var mailbox = this.getMailboxName(ctx.params.id);
+  client.openMailbox(mailbox, function(err, mboxInfo) {
     if (err) {
       return cb(err);
     }
@@ -174,7 +184,8 @@ Surelia.prototype.readEmail = function (ctx, options, cb) {
 
 Surelia.prototype.manageFlag = function (ctx, options, cb) {
   var client = this.getClient(ctx, options, cb);
-  client.openMailbox(ctx.params.id, function(err, mboxInfo) {
+  var mailbox = this.getMailboxName(ctx.params.id);
+  client.openMailbox(mailbox, function(err, mboxInfo) {
     if (err) {
       return cb(err);
     }
@@ -186,7 +197,7 @@ Surelia.prototype.manageFlag = function (ctx, options, cb) {
       var returnValue = {
         type: "email",
         data: {
-          mailbox: ctx.params.id,
+          mailbox: mailbox,
           uid: ctx.params.emailId
         }
       };
@@ -209,6 +220,7 @@ Surelia.prototype.manageFlag = function (ctx, options, cb) {
 
 Surelia.prototype.deleteEmail = function (ctx, options, cb) {
   var mailbox = options.mailbox || ctx.params.id;
+  mailbox = this.getMailboxName(mailbox);
   var draftId = options.draftId || ctx.params.emailId;
   var client = this.getClient(ctx, options, cb);
   client.openMailbox(mailbox, function(err, mboxInfo) {
@@ -230,6 +242,7 @@ Surelia.prototype.deleteEmail = function (ctx, options, cb) {
 
 Surelia.prototype.readEmailRaw = function (ctx, options, cb) {
   var mailbox = options.mailbox || ctx.params.id;
+  mailbox = this.getMailboxName(mailbox);
   var emailId = options.emailId || ctx.params.emailId;
 
   var client = this.getClient(ctx, options, cb);
@@ -252,6 +265,7 @@ Surelia.prototype.readEmailRaw = function (ctx, options, cb) {
 
 Surelia.prototype.readHeaders = function (ctx, options, cb) {
   var mailbox = options.mailbox || ctx.params.id;
+  mailbox = this.getMailboxName(mailbox);
   var emailId = options.emailId || ctx.params.emailId;
   var client = this.getClient(ctx, options, cb);
   console.log(options);
