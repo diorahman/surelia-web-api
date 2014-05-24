@@ -200,9 +200,10 @@ describe ("Surelia", function (){
 
   });
 
+  var draftId;
   it ("Compose a new email", function (done){
 
-    var uri = "/api/1/surelia";
+    var uri = "/api/1/surelia/drafts";
     var data = {
       message: "From: test@test.com\nTo: test2@test2.com\nSubject: Test\n\nDraft Message"
     };
@@ -210,6 +211,47 @@ describe ("Surelia", function (){
     request (toServer())
     .put(uri)
     .send(data)
+    .expect (200)
+    .end(function (err, res){
+     
+      console.log(res.body);
+      draftId = res.body.data.uid;
+      
+      done(err);
+    });
+
+  });
+
+
+  it ("Update draft email", function (done){
+
+    var uri = "/api/1/surelia/drafts/" + draftId;
+    var data = {
+      message: "From: test@test.com\nTo: mdamt@mnots.eu\nSubject: Test\n\nDraft Message " + (new Date)
+    };
+
+    request (toServer())
+    .put(uri)
+    .send(data)
+    .expect (200)
+    .end(function (err, res){
+     
+      console.log(res.body);
+      draftId = res.body.data.uid;
+      
+      done(err);
+    });
+
+  });
+
+
+  it ("Send the draft email", function (done){
+
+    var uri = "/api/1/surelia/drafts/" + draftId;
+
+    request (toServer())
+    .post(uri)
+    .send({draftId: draftId})
     .expect (200)
     .end(function (err, res){
      

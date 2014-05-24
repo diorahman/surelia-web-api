@@ -24,7 +24,8 @@
     "request": "~2.36.0",
     "debug": "~0.8.1",
     "lodash": "~2.4.1",
-    "inbox": "~1.1.54"
+    "inbox": "~1.1.54",
+    "simplesmtp": "~0.3.31"
   },
   "devDependencies": {
     "should": "~3.3.0",

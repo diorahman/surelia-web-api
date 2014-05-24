@@ -37,13 +37,13 @@ function Routes (name, mid, handle) {
   router.GET ("/surelia/boxes/:id/:emailId/headers", handle.readHeaders);
 
   // Compose a new draft email
-  router.PUT ("/surelia", handle.composeEmail);
+  router.PUT ("/surelia/drafts", handle.composeEmail);
 
   // Update a new draft email
-  router.PUT ("/surelia/:id", handle.updateDraftEmail);
+  router.PUT ("/surelia/drafts/:id", handle.updateDraftEmail);
 
   // Send a draft email
-  router.POST ("/surelia/:id", handle.sendDraftEmail);
+  router.POST ("/surelia/drafts/:id", handle.sendDraftEmail);
 
   // return the router;
   return router;
