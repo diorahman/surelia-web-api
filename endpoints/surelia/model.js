@@ -23,6 +23,7 @@ Surelia.prototype.authenticate = function (ctx, options, cb) {
   ctx.imapManager.get({
     server: self.options.imapConfig.host,
     port : self.options.imapConfig.port,
+    secure : self.options.imapConfig.secure,
     auth: {
       user: user,
       pass: pass
