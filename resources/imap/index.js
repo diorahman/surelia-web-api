@@ -13,7 +13,7 @@ ImapClientManager.prototype.get = function(options, cb){
   // options, contains user._id and imap credentials
   function connect(imapOpt, cb) {
     var client = inbox.createConnection(
-      false, 
+      imapOpt.port, 
       imapOpt.server, 
       { secureConnection: true, auth : imapOpt.auth});
     
