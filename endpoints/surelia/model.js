@@ -119,13 +119,14 @@ Surelia.prototype.getMailboxName = function(name) {
 Surelia.prototype.listEmails = function (ctx, options, cb) {
   var client = this.getClient(ctx, options, cb);
   var mailbox = this.getMailboxName(ctx.params.id);
-  mailbox = this.getMailboxName(mailbox);
+  // mailbox = this.getMailboxName(mailbox);
   client.openMailbox(mailbox, function(err, mboxInfo) {
     if (err) {
       return cb(err);
     }
     var from = ctx.query.from || 0;
     var limit = ctx.query.limit || 20;
+    limit = limit > mboxInfo.count ? mboxInfo.count : limit;
     client.listMessages(from, limit, function(err, mbox) {
       if (err) {
         return cb(err);
